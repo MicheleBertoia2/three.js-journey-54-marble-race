@@ -1,8 +1,15 @@
 import create from "zustand"
-export default create((set) =>
+import { subscribeWithSelector } from 'zustand/middleware'
+
+export default create(subscribeWithSelector(
+  (set) =>
 {
   return {
-    blocksCount: 3,
+    blocksCount: 10,
+    blockSeed: 0,
+
+    startTime: 0,
+    endTime: 0,
 
     /**
      * Phases
@@ -11,26 +18,36 @@ export default create((set) =>
 
     start: () =>
     {
-      set(() => 
+      set((state) => 
       {
-        return { phase: 'playing' }
+        if(state.phase === 'ready')
+          return { phase: 'playing', startTime: Date.now() }
+
+          return {}
       })
     },
 
     restart: () =>
     {
-      set(() => 
+      set((state) => 
       {
-        return { phase: 'ready' }
+        if(state.phase === 'playing' || state.phase === 'ended')
+          return { phase: 'ready', blockSeed: Math.random() }
+
+          return {}
       })
     },
 
     end: () =>
     {
-      set(() => 
+      set((state) => 
       {
-        return { phase: 'ended' }
+        if(state.phase === 'playing')
+          return { phase: 'ended', endTime: Date.now() }
+
+          return {}
       })
     }
   }
-})
+}
+))

@@ -37,8 +37,27 @@ export default function Player()
     }
   }
 
+  const reset = () =>
+  {
+    marble.current.setTranslation({ x: 0, y: 1, z: 0})
+    marble.current.setLinvel({ x: 0, y: 0, z: 0})
+    marble.current.setAngvel({ x: 0, y: 0, z: 0})
+  }
+
   useEffect(() => 
         {
+
+          const unsubscribeReset  = useGames.subscribe(
+            (state) => state.phase,
+            (value) =>
+            {
+              if(value === 'ready')
+              {
+                reset()
+              }
+            }
+          )
+
           const unsubscribeJump = subscribeKeys(
             (state) => state.jump,          
             (value) =>
@@ -61,6 +80,7 @@ export default function Player()
           {
               unsubscribeJump()
               unsubscribeAny()
+              unsubscribeReset()
           }
   }, [])
 

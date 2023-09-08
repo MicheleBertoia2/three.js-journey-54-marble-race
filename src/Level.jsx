@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, Float, Text } from '@react-three/drei'
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
 
@@ -14,6 +14,21 @@ const wallMaterial = new THREE.MeshStandardMaterial({color: 'slategrey'})
 function BlockStart({ position = [0, 0, 0]})
 {
   return <group position={ position }>
+      <Float floatIntensity={0.25} rotationIntensity={0.25}>
+        <Text 
+          scale={0.5} 
+          font='./bebas-neue-v9-latin-regular.woff'
+          maxWidth={0.25}
+          lineHeight={0.75}
+          textAlign='right'
+          position={[ 0.75, 0.65, 0]}
+          rotation-y={ - 0.25}
+        
+        >
+          Marble Race
+          <meshBasicMaterial toneMapped={false} />
+          </Text>
+      </Float>
       <mesh position={ [ 0, - 0.1, 0 ] } geometry={boxGeometry} material={floor1Material} scale={[4, 0.2, 4]} receiveShadow/>
 
 
@@ -29,6 +44,10 @@ function BlockEnd({ position = [0, 0, 0]})
   })
 
   return <group position={ position }>
+      <Text scale={1} font='./bebas-neue-v9-latin-regular.woff' position={[0, 2.25, 2]} >
+        Finish
+        <meshBasicMaterial toneMapped={false} />
+        </Text>
       <mesh position={ [ 0, 0, 0 ] } geometry={boxGeometry} material={floor1Material} scale={[4, 0.2, 4]} receiveShadow/>
       <RigidBody type='fixed' colliders='hull' position={[0, 0.25, 0]} restitution={0.2} friction={0}>
         <primitive object={burgir.scene}  scale={ 0.25}/>
@@ -126,7 +145,11 @@ function Bounds({length = 1})
   </>
 }
 
-export function Level( { count = 5, types = [BlockSpinner, BlockAxe, BlockLimbo] } )
+export function Level( { 
+  count = 5,
+  types = [BlockSpinner, BlockAxe, BlockLimbo],
+  seed = 0
+  } )
 {
 
   const blocks = useMemo(() => 
@@ -139,7 +162,7 @@ export function Level( { count = 5, types = [BlockSpinner, BlockAxe, BlockLimbo]
     }
     return blocks
 
-  }, [count, types])
+  }, [count, types, seed])
   
   return <>
 
